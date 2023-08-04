@@ -1,17 +1,21 @@
 package quiz_application;
 
-import com.sun.nio.sctp.PeerAddressChangeNotification;
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
+
 
 public class Quiz extends JFrame {
 
     String questions[][] = new String[10][5];
     String answers[][] = new String[10][2];
+    String userAnswers[][] = new String[10][1];
     JLabel qNum, question;
     JRadioButton opt1,opt2,opt3,opt4;
+    ButtonGroup groupOptions;
+    public static int timer = 15;
+    public static int answer_given = 0;
+    public static int count = 0;
+
     Quiz(){
         setBounds(50,0,980,850);
         getContentPane().setBackground(Color.white);
@@ -129,7 +133,7 @@ public class Quiz extends JFrame {
         opt4.setFont(new Font("Dialog", Font.PLAIN,20));
         add(opt4);
 
-        ButtonGroup groupOptions = new ButtonGroup();
+        groupOptions = new ButtonGroup();
         groupOptions.add(opt1);
         groupOptions.add(opt2);
         groupOptions.add(opt3);
@@ -158,18 +162,63 @@ public class Quiz extends JFrame {
         submitBtn.setEnabled(false);
         add(submitBtn);
 
-        start(0);
+        start(count);
 
         setVisible(true);
+    }
+    public void paint(Graphics g){
+        super.paint(g);
+
+        String time = "Time left - " + timer + " seconds";//15
+        g.setColor(Color.red);
+        g.setFont(new Font("Tahoma", Font.BOLD,25));
+
+        if (timer > 0){
+            g.drawString(time,505,415);
+        } else{
+            g.drawString("Times up!!",650,415);
+        }
+        timer--;//14
+
+        try{
+           Thread.sleep(1000);
+           repaint();
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+
+        if(answer_given == 1){
+            answer_given = 0;
+            timer = 15;
+        } else if(timer < 0){
+            timer = 15;
+
+            if(groupOptions.getSelection() == null){
+                userAnswers[count][0] = "";
+            } else {
+                userAnswers[count][0] = groupOptions.getSelection().getActionCommand();
+            }
+            count++; //0//1
+            start(count);
+        }
     }
 
     public void start(int count){
         qNum.setText("" +(count +1) + ".");
         question.setText(questions[count][0]);
         opt1.setText(questions[count][1]);
+        opt1.setActionCommand(questions[count][1]);
+
         opt2.setText(questions[count][2]);
+        opt2.setActionCommand(questions[count][2]);
+
         opt3.setText(questions[count][3]);
+        opt3.setActionCommand(questions[count][3]);
+
         opt4.setText(questions[count][4]);
+        opt4.setActionCommand(questions[count][4]);
+
+        groupOptions.clearSelection();
     }
     public static void main(String[] args) {
         new Quiz();
