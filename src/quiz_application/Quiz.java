@@ -2,9 +2,10 @@ package quiz_application;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 
 
-public class Quiz extends JFrame {
+public class Quiz extends JFrame implements ActionListener {
 
     String questions[][] = new String[10][5];
     String answers[][] = new String[10][2];
@@ -12,11 +13,16 @@ public class Quiz extends JFrame {
     JLabel qNum, question;
     JRadioButton opt1,opt2,opt3,opt4;
     ButtonGroup groupOptions;
+    JButton helpBtn,nextBtn,submitBtn;
+
     public static int timer = 15;
     public static int answer_given = 0;
     public static int count = 0;
+    public static int score = 0;
+    String name;
 
-    Quiz(){
+    Quiz(String name){
+        this.name = name;
         setBounds(50,0,980,850);
         getContentPane().setBackground(Color.white);
         setLayout(null);
@@ -139,26 +145,29 @@ public class Quiz extends JFrame {
         groupOptions.add(opt3);
         groupOptions.add(opt4);
 
-        //Next button
-        JButton nextBtn = new JButton("Next");
-        nextBtn.setBounds(600,500,150,40);
-        nextBtn.setFont(new Font("Tahoma", Font.PLAIN,22));
-        nextBtn.setBackground(new Color(30,144,225));
-        nextBtn.setForeground(Color.white);
-        add(nextBtn);
         //Help button
-        JButton helpBtn = new JButton("50 50");
+        helpBtn = new JButton("50-50 Lifeline");
         helpBtn.setBounds(600,450,150,40);
-        helpBtn.setFont(new Font("Tahoma", Font.PLAIN,22));
+        helpBtn.setFont(new Font("Tahoma", Font.PLAIN,18));
         helpBtn.setBackground(new Color(30,144,225));
         helpBtn.setForeground(Color.white);
+        helpBtn.addActionListener(this);
         add(helpBtn);
+        //Next button
+        nextBtn = new JButton("Next");
+        nextBtn.setBounds(600,510,150,40);
+        nextBtn.setFont(new Font("Tahoma", Font.PLAIN,18));
+        nextBtn.setBackground(new Color(30,144,225));
+        nextBtn.setForeground(Color.white);
+        nextBtn.addActionListener(this);
+        add(nextBtn);
         //Back button
-        JButton submitBtn = new JButton("Submit");
-        submitBtn.setBounds(600,550,150,40);
-        submitBtn.setFont(new Font("Tahoma", Font.PLAIN,22));
+        submitBtn = new JButton("Submit");
+        submitBtn.setBounds(600,570,150,40);
+        submitBtn.setFont(new Font("Tahoma", Font.PLAIN,18));
         submitBtn.setBackground(new Color(30,144,225));
         submitBtn.setForeground(Color.white);
+        submitBtn.addActionListener(this);
         submitBtn.setEnabled(false);
         add(submitBtn);
 
@@ -192,14 +201,41 @@ public class Quiz extends JFrame {
             timer = 15;
         } else if(timer < 0){
             timer = 15;
+            opt1.setEnabled(true);
+            opt2.setEnabled(true);
+            opt3.setEnabled(true);
+            opt4.setEnabled(true);
 
-            if(groupOptions.getSelection() == null){
-                userAnswers[count][0] = "";
-            } else {
-                userAnswers[count][0] = groupOptions.getSelection().getActionCommand();
+            if(count == 8){
+                nextBtn.setEnabled(false);
+                submitBtn.setEnabled(true);
             }
-            count++; //0//1
-            start(count);
+            if(count == 9){ //submitbtn
+                if(groupOptions.getSelection() == null){
+                    userAnswers[count][0] = "";
+                } else {
+                    userAnswers[count][0] = groupOptions.getSelection().getActionCommand();
+                }
+
+                for(int i=0;i < userAnswers.length;i++){
+                    if(userAnswers[i][0].equals(answers[i][1])){
+                        score += 10;
+                    }else{
+                        score +=0;
+                    }
+                }
+                setVisible(false);
+                new Score(name,score);
+
+            }else{ //nextbtn
+                if(groupOptions.getSelection() == null){
+                    userAnswers[count][0] = "";
+                } else {
+                    userAnswers[count][0] = groupOptions.getSelection().getActionCommand();
+                }
+                count++; //0//1
+                start(count);
+            }
         }
     }
 
@@ -221,6 +257,60 @@ public class Quiz extends JFrame {
         groupOptions.clearSelection();
     }
     public static void main(String[] args) {
-        new Quiz();
+        new Quiz("User");
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if(e.getSource() == nextBtn){
+            //Change to the next question
+            repaint();
+            opt1.setEnabled(true);
+            opt2.setEnabled(true);
+            opt3.setEnabled(true);
+            opt4.setEnabled(true);
+
+            answer_given = 1;
+            if(groupOptions.getSelection() == null){
+                userAnswers[count][0] = "";
+            } else {
+                userAnswers[count][0] = groupOptions.getSelection().getActionCommand();
+            }
+            //disable the nextbtn and enable the submitbtn
+            if(count == 8){
+                nextBtn.setEnabled(false);
+                submitBtn.setEnabled(true);
+            }
+            count++;
+            start(count);
+        //50-50 chance
+        }else if(e.getSource() == helpBtn){
+            if(count ==2 || count == 4 || count ==6 || count ==8 || count==9){
+                opt2.setEnabled(false);
+                opt3.setEnabled(false);
+            }else{
+                opt1.setEnabled(false);
+                opt4.setEnabled(false);
+            }
+            helpBtn.setEnabled(false);
+        //submit
+        }else if(e.getSource()== submitBtn){
+            answer_given = 1;
+            if(groupOptions.getSelection() == null){
+                userAnswers[count][0] = "";
+            }else {
+                 userAnswers[count][0] = groupOptions.getSelection().getActionCommand();
+            }
+
+            for(int i=0;i < userAnswers.length;i++){
+               if(userAnswers[i][0].equals(answers[i][1])){
+                    score += 10;
+               }else{
+                    score +=0;
+               }
+            }
+            setVisible(false);
+            new Score(name,score);
+        }
     }
 }
