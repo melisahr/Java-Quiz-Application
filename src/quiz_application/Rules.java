@@ -60,7 +60,8 @@ public class Rules extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == startBtn){
-
+            setVisible(false);
+            new Quiz(name);
         }else{
             setVisible(false);
             new Login();
