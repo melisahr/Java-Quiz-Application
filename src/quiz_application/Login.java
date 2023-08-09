@@ -5,7 +5,7 @@ import java.awt.event.*;
 
 public class Login extends JFrame implements ActionListener {
     //Global variables
-    JButton rulesBtn, backBtn;
+    JButton rulesBtn, exitBtn;
     JTextField inputName;
     Login(){
         getContentPane().setBackground(Color.WHITE);
@@ -43,12 +43,12 @@ public class Login extends JFrame implements ActionListener {
         rulesBtn.addActionListener(this);
         add(rulesBtn);
 
-        backBtn = new JButton("Back");
-        backBtn.setBounds(915,270,120,25);
-        backBtn.setBackground(new Color(30,144,254));
-        backBtn.setForeground(Color.white);
-        backBtn.addActionListener(this);
-        add(backBtn);
+        exitBtn = new JButton("Exit");
+        exitBtn.setBounds(915,270,120,25);
+        exitBtn.setBackground(new Color(30,144,254));
+        exitBtn.setForeground(Color.white);
+        exitBtn.addActionListener(this);
+        add(exitBtn);
 
         setSize(1200,500);
         setLocation(200,150);
@@ -65,7 +65,7 @@ public class Login extends JFrame implements ActionListener {
             String name = inputName.getText();
             setVisible(false);
             new Rules(name);
-        } else if (e.getSource() == backBtn){
+        } else if (e.getSource() == exitBtn){
             setVisible(false);
         }
     }
