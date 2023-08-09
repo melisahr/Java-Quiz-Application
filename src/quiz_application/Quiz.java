@@ -283,9 +283,10 @@ public class Quiz extends JFrame implements ActionListener {
             }
             count++;
             start(count);
+            helpBtn.setEnabled(true);
         //50-50 chance
         }else if(e.getSource() == helpBtn){
-            if(count ==2 || count == 4 || count ==6 || count ==8 || count==9){
+            if(count == 2 || count == 4 || count == 6 || count == 8 || count== 9){
                 opt2.setEnabled(false);
                 opt3.setEnabled(false);
             }else{
@@ -302,7 +303,7 @@ public class Quiz extends JFrame implements ActionListener {
                  userAnswers[count][0] = groupOptions.getSelection().getActionCommand();
             }
 
-            for(int i=0;i < userAnswers.length;i++){
+            for(int i = 0;i < userAnswers.length;i++){
                if(userAnswers[i][0].equals(answers[i][1])){
                     score += 10;
                }else{
